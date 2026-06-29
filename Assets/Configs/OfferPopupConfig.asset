@@ -15,8 +15,8 @@ MonoBehaviour:
   offerNameSprite: {fileID: 0}
   carSprite: {fileID: 0}
   discountSprite: {fileID: 0}
-  originalPriceText: $14.99
-  discountedPriceText: $4.99
+  originalPriceText: 67 999
+  discountedPriceText: "50 000 \u0440\u0443\u0431."
   timerDurationSeconds: 86400
   rewards:
   - Id: 
