@@ -2,6 +2,8 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using OfferPopup.Domain;
+using UnityEngine;
+using Zenject;
 
 namespace OfferPopup.Presentation
 {
@@ -9,6 +11,7 @@ namespace OfferPopup.Presentation
     {
         private readonly IOfferPopupView view;
         private readonly IOfferButtonView offerButtonView;
+        private readonly IOfferButtonView buyButtonView;
         private readonly IOfferPopupTimer timer;
         private readonly OfferPopupData data;
         private readonly CancellationTokenSource destroyCts = new();
@@ -16,12 +19,14 @@ namespace OfferPopup.Presentation
 
         public OfferPopupPresenter(
             IOfferPopupView view,
-            IOfferButtonView offerButtonView,
+            [Inject(Id = "OfferButton")] IOfferButtonView offerButtonView,
+            [Inject(Id = "BuyButton")] IOfferButtonView buyButtonView,
             IOfferPopupTimer timer,
             OfferPopupData data)
         {
             this.view = view;
             this.offerButtonView = offerButtonView;
+            this.buyButtonView = buyButtonView;
             this.timer = timer;
             this.data = data;
 
@@ -35,7 +40,10 @@ namespace OfferPopup.Presentation
             view.Render(data);
             view.SetRewards(data.Rewards);
             view.SetVisible(false);
+            
             offerButtonView.SetIdleAnimationActive(true);
+            
+            buyButtonView?.SetIdleAnimationActive(false);
         }
 
         public void Dispose()
@@ -59,7 +67,10 @@ namespace OfferPopup.Presentation
         private void HandleOpenClicked()
         {
             view.SetVisible(true);
+            
             offerButtonView.SetIdleAnimationActive(false);
+            
+            buyButtonView?.SetIdleAnimationActive(true);
 
             if (timerRunning)
             {
@@ -72,12 +83,16 @@ namespace OfferPopup.Presentation
 
         private void HandleBuyClicked()
         {
+            Debug.Log("ВОСХИТИТЕЛЬНО!");
         }
 
         private void HandleCloseClicked()
         {
             view.SetVisible(false);
+            
             offerButtonView.SetIdleAnimationActive(true);
+            
+            buyButtonView?.SetIdleAnimationActive(false);
         }
     }
 }
