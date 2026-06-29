@@ -6,7 +6,6 @@ namespace OfferPopup.Presentation
 {
     public interface IOfferPopupView
     {
-        event Action OpenClicked;
         event Action BuyClicked;
         event Action CloseClicked;
 

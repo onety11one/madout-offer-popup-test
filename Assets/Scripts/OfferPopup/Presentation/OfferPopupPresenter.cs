@@ -8,18 +8,24 @@ namespace OfferPopup.Presentation
     public sealed class OfferPopupPresenter : IDisposable
     {
         private readonly IOfferPopupView view;
+        private readonly IOfferButtonView offerButtonView;
         private readonly IOfferPopupTimer timer;
         private readonly OfferPopupData data;
         private readonly CancellationTokenSource destroyCts = new();
         private bool timerRunning;
 
-        public OfferPopupPresenter(IOfferPopupView view, IOfferPopupTimer timer, OfferPopupData data)
+        public OfferPopupPresenter(
+            IOfferPopupView view,
+            IOfferButtonView offerButtonView,
+            IOfferPopupTimer timer,
+            OfferPopupData data)
         {
             this.view = view;
+            this.offerButtonView = offerButtonView;
             this.timer = timer;
             this.data = data;
 
-            this.view.OpenClicked += HandleOpenClicked;
+            this.offerButtonView.Clicked += HandleOpenClicked;
             this.view.BuyClicked += HandleBuyClicked;
             this.view.CloseClicked += HandleCloseClicked;
         }
@@ -29,11 +35,12 @@ namespace OfferPopup.Presentation
             view.Render(data);
             view.SetRewards(data.Rewards);
             view.SetVisible(false);
+            offerButtonView.SetIdleAnimationActive(true);
         }
 
         public void Dispose()
         {
-            view.OpenClicked -= HandleOpenClicked;
+            offerButtonView.Clicked -= HandleOpenClicked;
             view.BuyClicked -= HandleBuyClicked;
             view.CloseClicked -= HandleCloseClicked;
             destroyCts.Cancel();
@@ -52,6 +59,8 @@ namespace OfferPopup.Presentation
         private void HandleOpenClicked()
         {
             view.SetVisible(true);
+            offerButtonView.SetIdleAnimationActive(false);
+
             if (timerRunning)
             {
                 return;
@@ -68,6 +77,7 @@ namespace OfferPopup.Presentation
         private void HandleCloseClicked()
         {
             view.SetVisible(false);
+            offerButtonView.SetIdleAnimationActive(true);
         }
     }
 }

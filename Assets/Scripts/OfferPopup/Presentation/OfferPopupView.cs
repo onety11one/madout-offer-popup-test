@@ -25,14 +25,12 @@ namespace OfferPopup.Presentation
         [SerializeField] private TMP_Text timerText;
 
         [Header("Buttons")]
-        [SerializeField] private Button openButton;
         [SerializeField] private Button buyButton;
         [SerializeField] private Button closeButton;
 
         [Header("Rewards")]
         [SerializeField] private Transform rewardsRoot;
 
-        public event Action OpenClicked;
         public event Action BuyClicked;
         public event Action CloseClicked;
 
@@ -96,13 +94,6 @@ namespace OfferPopup.Presentation
         private void BindUi()
         {
             subscriptions.Clear();
-
-            if (openButton != null)
-            {
-                openButton.OnClickAsObservable()
-                    .Subscribe(_ => OpenClicked?.Invoke())
-                    .AddTo(subscriptions);
-            }
 
             if (buyButton != null)
             {
