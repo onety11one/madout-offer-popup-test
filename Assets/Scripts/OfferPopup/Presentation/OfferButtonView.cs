@@ -25,6 +25,14 @@ namespace OfferPopup.Presentation
             animator?.Stop();
         }
 
+        public void SetBuyAnimationInactive(bool active)
+        {
+            if (active)
+            {
+                animator?.PlayButtonGlow();
+            }
+        }
+
         public void SetIdleAnimationActive(bool active)
         {
             if (active)

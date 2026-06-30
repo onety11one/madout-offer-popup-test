@@ -40,6 +40,7 @@ namespace OfferPopup.Presentation
         [SerializeField] private PopupElementAnimator purchaseButtonAnimator;
         [SerializeField] private PopupElementAnimator closeButtonAnimator;
         [SerializeField] private PopupElementAnimator carTextAnimator;
+        [SerializeField] private CarVfxView carVfx;
         
         [SerializeField] private float delayBetweenAnimations;
         
@@ -119,15 +120,6 @@ namespace OfferPopup.Presentation
                 HideWithAnimation();
             }
         }
-        
-        public void SetBuyButtonAnimationActive(bool active)
-        {
-            var buyButtonView = buyButton?.GetComponent<IOfferButtonView>();
-            if (buyButtonView != null)
-            {
-                buyButtonView.SetIdleAnimationActive(active);
-            }
-        }
 
         private void ShowWithAnimation()
         {
@@ -147,6 +139,8 @@ namespace OfferPopup.Presentation
             {
                 currentAnimation.AppendCallback(() => carAnimator.PlayShowAnimation());
                 currentAnimation.AppendInterval(0.2f);
+                
+                if (carVfx != null) carVfx.PlayEngineSound();
             }
             
             if (headerAnimator != null)

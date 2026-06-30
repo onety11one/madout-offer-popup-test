@@ -9,8 +9,9 @@ namespace OfferPopup.Presentation
         [Header("Targets")]
         [SerializeField] private RectTransform buttonRoot;
         [SerializeField] private RectTransform shine;
-        [SerializeField] private Graphic shineGraphic;
-        [SerializeField] private Graphic glow;
+        [SerializeField] private Image shineImage;
+        [SerializeField] private Image glowImageTop;
+        [SerializeField] private Image glowImageBottom;
 
         [Header("Scale")]
         [SerializeField] private float idleScale = 1f;
@@ -28,12 +29,12 @@ namespace OfferPopup.Presentation
 
         [Header("Shine")]
         [SerializeField] private float shineTravel = 560f;
-        [SerializeField] private float shineDuration = 0.75f;
+        [SerializeField] private float shineDuration = 0.5f;
         [SerializeField] private float shineDelay = 1.15f;
 
         private Tweener scaleTween;
         private Tweener rotationTween;
-        private Tweener glowTween;
+        private Sequence glowTween;
         private Sequence shineSequence;
         private Vector3 initialScale;
         private Vector3 initialRotation;
@@ -52,14 +53,14 @@ namespace OfferPopup.Presentation
                 initialShinePosition = shine.anchoredPosition;
             }
 
-            if (shineGraphic != null)
+            if (shineImage != null)
             {
-                initialShineColor = shineGraphic.color;
+                initialShineColor = shineImage.color;
             }
 
-            if (glow != null)
+            if (glowImageTop != null)
             {
-                initialGlowColor = glow.color;
+                initialGlowColor = glowImageTop.color;
             }
         }
 
@@ -87,28 +88,7 @@ namespace OfferPopup.Presentation
                 .SetLoops(-1, LoopType.Yoyo)
                 .SetLink(gameObject)
                 .SetUpdate(true);
-
-            if (glow != null)
-            {
-                var color = initialGlowColor;
-                color.a = glowMinAlpha;
-                glow.color = color;
-
-                glowTween = DOTween.To(
-                        () => glow.color.a,
-                        alpha =>
-                        {
-                            var glowColor = glow.color;
-                            glowColor.a = alpha;
-                            glow.color = glowColor;
-                        },
-                        glowMaxAlpha,
-                        glowDuration)
-                    .SetEase(Ease.InOutSine)
-                    .SetLoops(-1, LoopType.Yoyo)
-                    .SetLink(gameObject)
-                    .SetUpdate(true);
-            }
+            
 
             if (shine != null)
             {
@@ -144,16 +124,32 @@ namespace OfferPopup.Presentation
                 shine.anchoredPosition = initialShinePosition;
             }
 
-            if (shineGraphic != null)
+            if (shineImage != null)
             {
-                shineGraphic.DOKill();
-                shineGraphic.color = initialShineColor;
+                shineImage.DOKill();
+                shineImage.color = initialShineColor;
             }
 
-            if (glow != null)
+            if (glowImageTop != null)
             {
-                glow.DOKill();
-                glow.color = initialGlowColor;
+                glowImageTop.DOKill();
+                glowImageBottom.DOKill();
+                glowImageTop.color = initialGlowColor;
+                glowImageBottom.color = initialGlowColor;
+            }
+        }
+
+        public void PlayButtonGlow()
+        {
+            if (glowImageTop != null && glowImageBottom != null)
+            {
+                glowTween = DOTween.Sequence()
+                    .Join(glowImageTop.DOFade(glowMaxAlpha, glowDuration * 0.5f).SetEase(Ease.OutSine))
+                    .Join(glowImageBottom.DOFade(glowMaxAlpha, glowDuration * 0.5f).SetEase(Ease.OutSine))
+                    .Append(glowImageTop.DOFade(glowMinAlpha, glowDuration * 0.5f).SetEase(Ease.InSine))
+                    .Join(glowImageBottom.DOFade(glowMinAlpha, glowDuration * 0.5f).SetEase(Ease.InSine))
+                    .SetLink(gameObject)
+                    .SetUpdate(true);
             }
         }
 
@@ -189,19 +185,19 @@ namespace OfferPopup.Presentation
 
         private float GetShineAlpha()
         {
-            return shineGraphic != null ? shineGraphic.color.a : 0f;
+            return shineImage != null ? shineImage.color.a : 0f;
         }
 
         private void SetShineAlpha(float alpha)
         {
-            if (shineGraphic == null)
+            if (shineImage == null)
             {
                 return;
             }
 
-            var color = shineGraphic.color;
+            var color = shineImage.color;
             color.a = alpha;
-            shineGraphic.color = color;
+            shineImage.color = color;
         }
     }
 }

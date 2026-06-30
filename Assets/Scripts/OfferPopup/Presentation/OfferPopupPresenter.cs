@@ -12,6 +12,7 @@ namespace OfferPopup.Presentation
         private readonly IOfferPopupView view;
         private readonly IOfferButtonView offerButtonView;
         private readonly IOfferButtonView buyButtonView;
+        private readonly ICarVfxView carVfx;
         private readonly IOfferPopupTimer timer;
         private readonly OfferPopupData data;
         private readonly CancellationTokenSource destroyCts = new();
@@ -21,12 +22,14 @@ namespace OfferPopup.Presentation
             IOfferPopupView view,
             [Inject(Id = "OfferButton")] IOfferButtonView offerButtonView,
             [Inject(Id = "BuyButton")] IOfferButtonView buyButtonView,
+            ICarVfxView carVfx,
             IOfferPopupTimer timer,
             OfferPopupData data)
         {
             this.view = view;
             this.offerButtonView = offerButtonView;
             this.buyButtonView = buyButtonView;
+            this.carVfx = carVfx;
             this.timer = timer;
             this.data = data;
 
@@ -83,6 +86,8 @@ namespace OfferPopup.Presentation
 
         private void HandleBuyClicked()
         {
+            buyButtonView?.SetBuyAnimationInactive(true);
+            carVfx?.PlayVfx();
             Debug.Log("ВОСХИТИТЕЛЬНО!");
         }
 

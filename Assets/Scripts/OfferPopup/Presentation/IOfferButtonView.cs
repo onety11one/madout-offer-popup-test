@@ -7,5 +7,6 @@ namespace OfferPopup.Presentation
         event Action Clicked;
 
         void SetIdleAnimationActive(bool active);
+        void SetBuyAnimationInactive(bool active);
     }
 }
